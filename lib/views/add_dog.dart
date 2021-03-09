@@ -1,4 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:sql/models/database.dart';
+import 'package:sql/models/db_manager.dart';
+import 'package:sql/models/dog.dart';
 
 //https://api.flutter.dev/flutter/material/TextField-class.html
 class DogAdd extends StatefulWidget {
@@ -10,6 +15,9 @@ class DogAdd extends StatefulWidget {
 
 class _DogAddState extends State<DogAdd> {
   final _formKey = GlobalKey<FormState>();
+
+  String _dogName = "";
+  int _dogAge = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +41,7 @@ class _DogAddState extends State<DogAdd> {
 
                   return null;
                 },
+                onSaved: (value) => this._dogName = value!,
               ),
               SizedBox(height: 8),
               //age
@@ -45,15 +54,31 @@ class _DogAddState extends State<DogAdd> {
 
                   return null;
                 },
+                onSaved: (value) => this._dogAge = int.parse(value!),
               ),
               SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      // force unwrap database await
+                      AppDatabase db = (await DBManager.instance.database)!;
+                      this._formKey.currentState?.save();
+                      log(this._dogName);
+                      log(this._dogAge.toString());
+                      Text msg;
+                      try {
+                        await db.dogDao.insertDog(
+                            Dog(id: 0, name: this._dogName, age: this._dogAge));
+                        msg = Text('Saved!');
+                      } catch (err) {
+                        log(err.toString());
+                        msg =
+                            Text('Error!', style: TextStyle(color: Colors.red));
+                      }
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Saved!'),
+                        content: msg,
                       ));
                     }
                   },
