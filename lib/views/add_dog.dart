@@ -78,7 +78,8 @@ class _DogAddState extends State<DogAdd> {
                         Text msg;
                         try {
                           await db.dogDao.insertDog(
-                              Dog(name: this._dogName, age: this._dogAge));
+                            Dog(name: this._dogName, age: this._dogAge),
+                          );
                           msg = Text('Saved!');
                           this._dataChanged = true;
                         } catch (err) {

@@ -19,20 +19,24 @@ class _HomeState extends State<Home> {
     final list = await db!.dogDao.findAllDogs();
     log(list.toString());
     return list;
-    // // Convert the List<Map<String, dynamic> into a List<Dog>.
-    // return List.generate(maps.length, (i) {
-    //   return Dog(
-    //     id: maps[i]['id'],
-    //     name: maps[i]['name'],
-    //     age: maps[i]['age'],
-    //   );
-    // });
+  }
+
+  _navigateTo(String route) {
+    return () {
+      Navigator.pushNamed(
+        context,
+        route,
+      ).then((dataChanged) async {
+        bool modified = dataChanged as bool;
+        // call setstate to reload list on data modified
+        if (modified) setState(() {});
+      });
+    };
   }
 
   // https://stackoverflow.com/questions/49930180/flutter-render-widget-after-async-call
   //https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html
   List<Dog> data = [];
-  final List<int> colorCodes = <int>[600, 500, 100];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,16 +45,7 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.pushNamed(
-            context,
-            Routes.add_dog,
-          ).then((dataChanged) async {
-            bool modified = dataChanged as bool;
-            // call setstate to reload list on data modified
-            if (modified) setState(() {});
-          });
-        },
+        onPressed: _navigateTo(Routes.add_dog),
       ),
       body: FutureBuilder(
           future: dogs(),
@@ -62,12 +57,16 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.all(8),
               itemCount: data.length,
               itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 50,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  color: index % 2 == 0 ? Colors.green[400] : Colors.green[200],
-                  child: Center(
-                    child: Text('Perrito ${data[index].name}'),
+                return GestureDetector(
+                  onTap: _navigateTo(Routes.add_dog),
+                  child: Container(
+                    height: 50,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    color:
+                        index % 2 == 0 ? Colors.green[400] : Colors.green[200],
+                    child: Center(
+                      child: Text('Perrito ${data[index].name}'),
+                    ),
                   ),
                 );
               },
@@ -76,3 +75,4 @@ class _HomeState extends State<Home> {
     );
   }
 }
+//https://flutter.dev/docs/cookbook/gestures/handling-taps
