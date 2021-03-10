@@ -45,7 +45,11 @@ class _HomeState extends State<Home> {
           Navigator.pushNamed(
             context,
             Routes.add_dog,
-          );
+          ).then((dataChanged) async {
+            bool modified = dataChanged as bool;
+            // call setstate to reload list on data modified
+            if (modified) setState(() {});
+          });
         },
       ),
       body: FutureBuilder(
@@ -61,7 +65,7 @@ class _HomeState extends State<Home> {
                 return Container(
                   height: 50,
                   margin: const EdgeInsets.only(bottom: 8),
-                  color: Colors.amber,
+                  color: index % 2 == 0 ? Colors.green[400] : Colors.green[200],
                   child: Center(
                     child: Text('Perrito ${data[index].name}'),
                   ),

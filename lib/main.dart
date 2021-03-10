@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "SQLite App",
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: Colors.green,
       ),
       onGenerateRoute: AppRouter.generateRoute,
       initialRoute: Routes.home,

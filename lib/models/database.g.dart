@@ -80,7 +80,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Dogs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `age` INTEGER NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `Dogs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `age` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -118,10 +118,8 @@ class _$DogDao extends DogDao {
   @override
   Future<List<Dog>> findAllDogs() async {
     return _queryAdapter.queryList('SELECT * FROM dogs',
-        mapper: (Map<String, Object?> row) => Dog(
-            id: row['id'] as int,
-            name: row['name'] as String,
-            age: row['age'] as int));
+        mapper: (Map<String, Object?> row) =>
+            Dog(name: row['name'] as String, age: row['age'] as int));
   }
 
   @override
@@ -130,10 +128,8 @@ class _$DogDao extends DogDao {
         arguments: [id],
         queryableName: 'Dogs',
         isView: false,
-        mapper: (Map<String, Object?> row) => Dog(
-            id: row['id'] as int,
-            name: row['name'] as String,
-            age: row['age'] as int));
+        mapper: (Map<String, Object?> row) =>
+            Dog(name: row['name'] as String, age: row['age'] as int));
   }
 
   @override
