@@ -7,5 +7,5 @@ class Dog {
   final String name;
   final int age;
 
-  Dog({required this.name, required this.age});
+  Dog({this.id, required this.name, required this.age});
 }

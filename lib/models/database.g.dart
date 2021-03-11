@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
 
 class _$DogDao extends DogDao {
   _$DogDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database, changeListener),
+      : _queryAdapter = QueryAdapter(database),
         _dogInsertionAdapter = InsertionAdapter(
             database,
             'Dogs',
@@ -104,8 +104,7 @@ class _$DogDao extends DogDao {
                   'id': item.id,
                   'name': item.name,
                   'age': item.age
-                },
-            changeListener);
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -118,18 +117,30 @@ class _$DogDao extends DogDao {
   @override
   Future<List<Dog>> findAllDogs() async {
     return _queryAdapter.queryList('SELECT * FROM dogs',
-        mapper: (Map<String, Object?> row) =>
-            Dog(name: row['name'] as String, age: row['age'] as int));
+        mapper: (Map<String, Object?> row) => Dog(
+            id: row['id'] as int?,
+            name: row['name'] as String,
+            age: row['age'] as int));
   }
 
   @override
-  Stream<Dog?> findDogById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM dogs WHERE id = ?',
+  Future<Dog?> findDogById(int id) async {
+    return _queryAdapter.query('SELECT * FROM dogs WHERE id = ?',
         arguments: [id],
-        queryableName: 'Dogs',
-        isView: false,
-        mapper: (Map<String, Object?> row) =>
-            Dog(name: row['name'] as String, age: row['age'] as int));
+        mapper: (Map<String, Object?> row) => Dog(
+            id: row['id'] as int?,
+            name: row['name'] as String,
+            age: row['age'] as int));
+  }
+
+  @override
+  Future<Dog?> updateDog(int id, String name, int age) async {
+    return _queryAdapter.query('UPDATE dogs SET name = ?, age = ? WHERE id = ?',
+        arguments: [id, name, age],
+        mapper: (Map<String, Object?> row) => Dog(
+            id: row['id'] as int?,
+            name: row['name'] as String,
+            age: row['age'] as int));
   }
 
   @override

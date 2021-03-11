@@ -8,10 +8,13 @@ abstract class DogDao {
   Future<List<Dog>> findAllDogs();
 
   @Query('SELECT * FROM dogs WHERE id = :id')
-  Stream<Dog?> findDogById(int id);
+  Future<Dog?> findDogById(int id);
 
   @insert
   Future<void> insertDog(Dog dog);
+
+  @Query('UPDATE dogs SET name = :name, age = :age WHERE id = :id')
+  Future<Dog?> updateDog(int id, String name, int age);
 
   @Query('DELETE FROM dogs WHERE id = :id')
   Future<void> delete(int id);

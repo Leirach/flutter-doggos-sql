@@ -21,11 +21,13 @@ class _HomeState extends State<Home> {
     return list;
   }
 
-  _navigateTo(String route) {
+  _navigateTo(String route, {Object? args}) {
     return () {
+      log(args.toString());
       Navigator.pushNamed(
         context,
         route,
+        arguments: args,
       ).then((dataChanged) async {
         bool modified = dataChanged as bool;
         // call setstate to reload list on data modified
@@ -58,7 +60,7 @@ class _HomeState extends State<Home> {
               itemCount: data.length,
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
-                  onTap: _navigateTo(Routes.add_dog),
+                  onTap: _navigateTo(Routes.edit_dog, args: data[index].id),
                   child: Container(
                     height: 50,
                     margin: const EdgeInsets.only(bottom: 8),
